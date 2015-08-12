@@ -12,16 +12,22 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+/// <reference path="../typings/underscore/underscore.d.ts" />
 var angular2_1 = require('angular2/angular2');
 var PersonList = (function () {
     function PersonList(http) {
-        var _this = this;
+        this.peopleList = [];
         this.http = http;
-        http.get('/persons').toRx().map(function (res) { return res.json(); }).subscribe(function (people) {
-            _this.peopleList.push(people);
+        this.getAllPeople();
+    }
+    PersonList.prototype.getAllPeople = function () {
+        var _this = this;
+        this.http.get('/persons').toRx().subscribe(function (people) {
+            _.each(people, function () { _this.peopleList.push(people.name); }, _this);
             console.log(people);
         });
-    }
+    };
+    ;
     PersonList.prototype.addPerson = function (personName) {
         var parameters = JSON.stringify({ name: personName, age: 15 });
         var requestOptions = new angular2_1.RequestOptions();
@@ -29,6 +35,7 @@ var PersonList = (function () {
         header.append('Content-Type', 'application/json');
         requestOptions.headers = header;
         this.http.post('/person', parameters, requestOptions);
+        this.getAllPeople();
     };
     PersonList.prototype.doneTyping = function ($event) {
         if ($event.which === 13) {

@@ -10,7 +10,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 /// <reference path="typings/angular2/angular2.d.ts" />
-/// <reference path="typings/rx/rx.d.ts" />
 var angular2_1 = require('angular2/angular2');
 var MyAppComponent = (function () {
     function MyAppComponent() {

@@ -1,9 +1,11 @@
+/// <reference path="../typings/underscore/underscore.d.ts" />
 import {Component, View, bootstrap, NgFor, NgIf, Http, Inject, httpInjectables, IRequestOptions, RequestOptions, Headers} from 'angular2/angular2';
 import {Observable} from 'rx';
 @Component({
     selector: 'person-list',
     viewInjector: [httpInjectables]
 })
+
 @View({
     template: `
     <ul>
@@ -20,17 +22,22 @@ import {Observable} from 'rx';
 
 class PersonList {
 
-    peopleList: Array<string>;
-    http: Http;
+    private peopleList: Array<string> = [];
+    private http: Http;
 
     constructor(@Inject(Http) http) {
         this.http = http;
-        //this.peopleList = ["Eat Breakfast", "Walk Dog", "Breathe"];
-        http.get('/persons').toRx().map(res => res.json()).subscribe(people => {
-            this.peopleList.push(people)
-            console.log(people);
-        });
+        this.getAllPeople();
     }
+
+    private getAllPeople() {
+        //this.peopleList = ["Eat Breakfast", "Walk Dog", "Breathe"];
+        this.http.get('/persons').toRx().subscribe(people => {
+                _.each(people, ()=>{this.peopleList.push(people.name)}, this);
+                console.log(people);
+            }
+        )
+    };
 
     addPerson(personName: string) {
         var parameters: string = JSON.stringify({name: personName, age : 15});
@@ -39,6 +46,7 @@ class PersonList {
         header.append('Content-Type', 'application/json');
         requestOptions.headers = header;
         this.http.post('/person',parameters,requestOptions);
+        this.getAllPeople();
     }
 
     doneTyping($event) {
