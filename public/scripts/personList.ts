@@ -5,7 +5,7 @@ import {Observable} from 'rx';
 import {Person} from "./models/Person";
 @Component({
     selector: 'person-list',
-    viewInjector: [httpInjectables]
+    viewBindings : [httpInjectables]
 })
 
 @View({
@@ -27,7 +27,7 @@ class PersonList {
     private peopleList: Array<string> = [];
     private http: Http;
 
-    constructor(@Inject(Http) http) {
+    constructor(http: Http) {
         this.http = http;
         this.getAllPeople();
     }
@@ -37,7 +37,6 @@ class PersonList {
         this.http.get('/persons').toRx().map(res => res.json()).subscribe(people => {
                 _.each(people, (person: Person)=>{
                     this.peopleList.push(person.name);
-                    console.log(person.name);
                 });
 
             }
