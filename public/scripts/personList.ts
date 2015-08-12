@@ -1,4 +1,5 @@
-import {Component, View, bootstrap, NgFor, NgIf, Http, Inject, httpInjectables} from 'angular2/angular2';
+import {Component, View, bootstrap, NgFor, NgIf, Http, Inject, httpInjectables, IRequestOptions, RequestOptions, Headers} from 'angular2/angular2';
+import {Observable} from 'rx';
 @Component({
     selector: 'person-list',
     viewInjector: [httpInjectables]
@@ -24,11 +25,20 @@ class PersonList {
 
     constructor(@Inject(Http) http) {
         this.http = http;
-        this.peopleList = ["Eat Breakfast", "Walk Dog", "Breathe"];
+        //this.peopleList = ["Eat Breakfast", "Walk Dog", "Breathe"];
+        http.get('/persons').toRx().map(res => res.json()).subscribe(people => {
+            this.peopleList.push(people)
+            console.log(people);
+        });
     }
 
     addPerson(personName: string) {
-        this.http.post('/person','{name: '+personName+", age: 15}");
+        var parameters: string = JSON.stringify({name: personName, age : 15});
+        var requestOptions: IRequestOptions = new RequestOptions();
+        var header: Headers = new Headers();
+        header.append('Content-Type', 'application/json');
+        requestOptions.headers = header;
+        this.http.post('/person',parameters,requestOptions);
     }
 
     doneTyping($event) {

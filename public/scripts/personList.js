@@ -15,11 +15,20 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var angular2_1 = require('angular2/angular2');
 var PersonList = (function () {
     function PersonList(http) {
+        var _this = this;
         this.http = http;
-        this.peopleList = ["Eat Breakfast", "Walk Dog", "Breathe"];
+        http.get('/persons').toRx().map(function (res) { return res.json(); }).subscribe(function (people) {
+            _this.peopleList.push(people);
+            console.log(people);
+        });
     }
     PersonList.prototype.addPerson = function (personName) {
-        this.http.post('/person', '{name: ' + personName + ", age: 15}");
+        var parameters = JSON.stringify({ name: personName, age: 15 });
+        var requestOptions = new angular2_1.RequestOptions();
+        var header = new angular2_1.Headers();
+        header.append('Content-Type', 'application/json');
+        requestOptions.headers = header;
+        this.http.post('/person', parameters, requestOptions);
     };
     PersonList.prototype.doneTyping = function ($event) {
         if ($event.which === 13) {
