@@ -13,6 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 /// <reference path="../typings/underscore/underscore.d.ts" />
+/// <reference path="./models/Person.ts" />
 var angular2_1 = require('angular2/angular2');
 var PersonList = (function () {
     function PersonList(http) {
@@ -22,9 +23,12 @@ var PersonList = (function () {
     }
     PersonList.prototype.getAllPeople = function () {
         var _this = this;
-        this.http.get('/persons').toRx().subscribe(function (people) {
-            _.each(people, function () { _this.peopleList.push(people.name); }, _this);
-            console.log(people);
+        this.peopleList = [];
+        this.http.get('/persons').toRx().map(function (res) { return res.json(); }).subscribe(function (people) {
+            _.each(people, function (person) {
+                _this.peopleList.push(person.name);
+                console.log(person.name);
+            });
         });
     };
     ;

@@ -1,6 +1,8 @@
 /// <reference path="../typings/underscore/underscore.d.ts" />
+/// <reference path="./models/Person.ts" />
 import {Component, View, bootstrap, NgFor, NgIf, Http, Inject, httpInjectables, IRequestOptions, RequestOptions, Headers} from 'angular2/angular2';
 import {Observable} from 'rx';
+import {Person} from "./models/Person";
 @Component({
     selector: 'person-list',
     viewInjector: [httpInjectables]
@@ -31,10 +33,13 @@ class PersonList {
     }
 
     private getAllPeople() {
-        //this.peopleList = ["Eat Breakfast", "Walk Dog", "Breathe"];
-        this.http.get('/persons').toRx().subscribe(people => {
-                _.each(people, ()=>{this.peopleList.push(people.name)}, this);
-                console.log(people);
+        this.peopleList = [];
+        this.http.get('/persons').toRx().map(res => res.json()).subscribe(people => {
+                _.each(people, (person: Person)=>{
+                    this.peopleList.push(person.name);
+                    console.log(person.name);
+                });
+
             }
         )
     };
